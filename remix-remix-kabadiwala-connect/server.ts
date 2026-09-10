@@ -47,8 +47,11 @@ app.post('/api/analyze-waste', async (req, res) => {
 
     const text = response.text || '';
     // parse the JSON
-    const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
-    const result = JSON.parse(cleanText);
+    const match = text.match(/\{[\s\S]*\}/);
+    if (!match) {
+      throw new Error('Could not parse JSON from model response');
+    }
+    const result = JSON.parse(match[0]);
     
     res.json(result);
   } catch (error) {
