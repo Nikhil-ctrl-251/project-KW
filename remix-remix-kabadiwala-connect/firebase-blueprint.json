@@ -1,0 +1,79 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "A user of the Kabadiwala Connect app (Household or Kabadiwala)",
+      "type": "object",
+      "properties": {
+        "role": {
+          "type": "string",
+          "enum": ["household", "kabadiwala"]
+        },
+        "email": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "timestamp"
+        }
+      },
+      "required": ["role", "email", "createdAt"]
+    },
+    "Pickup": {
+      "title": "Pickup",
+      "description": "A waste pickup request",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "kabadiwalaId": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "accepted", "collected"]
+        },
+        "location": {
+          "type": "object",
+          "properties": {
+            "lat": { "type": "number" },
+            "lng": { "type": "number" }
+          }
+        },
+        "wasteType": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "estimatedValue": {
+          "type": "number"
+        },
+        "actualWeight": {
+          "type": "number"
+        },
+        "imageUrl": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "createdAt": {
+          "type": "timestamp"
+        },
+        "updatedAt": {
+          "type": "timestamp"
+        }
+      },
+      "required": ["userId", "status", "wasteType", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User profiles"
+    },
+    "/pickups/{pickupId}": {
+      "schema": { "$ref": "#/entities/Pickup" },
+      "description": "Waste pickup requests"
+    }
+  }
+}

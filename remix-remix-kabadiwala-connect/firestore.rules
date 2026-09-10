@@ -1,0 +1,63 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    function isSignedIn() { return request.auth != null; }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['role', 'email', 'createdAt']) &&
+             data.role in ['household', 'kabadiwala'] &&
+             data.email is string &&
+             data.email.size() <= 200;
+    }
+
+    match /users/{userId} {
+      allow get: if isSignedIn();
+      allow list: if false;
+      
+      allow create: if isSignedIn() &&
+                       isValidId(userId) &&
+                       userId == request.auth.uid &&
+                       isValidUser(incoming()) &&
+                       incoming().createdAt == request.time;
+      
+      allow update: if isSignedIn() &&
+                       userId == request.auth.uid &&
+                       isValidUser(incoming());
+    }
+
+    function isValidPickup(data) {
+      return data.keys().hasAny(['userId', 'status', 'wasteType', 'createdAt']) &&
+             data.userId is string && data.userId.size() <= 128 &&
+             data.status in ['pending', 'accepted', 'en_route', 'collected'] &&
+             data.wasteType is string && data.wasteType.size() <= 200;
+    }
+
+    match /pickups/{pickupId} {
+      // Allow read for authenticated users (households see their own, kabadiwalas see pending)
+      // For a production app we'd secure this further with a query guard.
+      allow read: if isSignedIn(); 
+      
+      allow create: if isSignedIn() &&
+                       isValidId(pickupId) &&
+                       isValidPickup(incoming()) &&
+                       incoming().userId == request.auth.uid &&
+                       incoming().status == 'pending' &&
+                       incoming().createdAt == request.time;
+                       
+      allow update: if isSignedIn() && isValidPickup(incoming()) && (
+        (incoming().userId == request.auth.uid) ||
+        (existing().status == 'pending' && incoming().status == 'accepted') ||
+        (existing().status == 'accepted' && incoming().status == 'en_route') ||
+        (existing().status == 'accepted' && incoming().status == 'collected') ||
+        (existing().status == 'en_route' && incoming().status == 'collected')
+      );
+    }
+  }
+}

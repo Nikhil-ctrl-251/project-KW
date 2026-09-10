@@ -1,0 +1,11 @@
+{
+  "name": "Remix Remix Kabadiwala Connect",
+  "description": "A waste management prototype connecting households with scrap dealers, featuring AI waste classification.",
+  "requestFramePermissions": [
+    "geolocation",
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
