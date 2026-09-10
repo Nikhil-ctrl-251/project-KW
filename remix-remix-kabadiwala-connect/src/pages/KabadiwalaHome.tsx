@@ -309,7 +309,7 @@ export function KabadiwalaHome() {
                   <div key={p.id} className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex justify-between items-center">
                     <div>
                       <p className="font-bold text-gray-900">{p.wasteType}</p>
-                      <p className="text-sm text-gray-500">{new Date(p.createdAt?.toDate()).toLocaleDateString()}</p>
+                      <p className="text-sm text-gray-500">{p.createdAt?.toDate ? new Date(p.createdAt.toDate()).toLocaleDateString() : 'Just now'}</p>
                     </div>
                     <div className="text-right">
                       <p className="font-bold text-green-600">₹{(p.actualWeight * (p.estimatedValue || 10)).toFixed(0)}</p>

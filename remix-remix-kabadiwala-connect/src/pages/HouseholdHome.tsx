@@ -115,7 +115,6 @@ export function HouseholdHome() {
             lng: position.coords.longitude
           },
           scheduledFor: scheduledDate || 'immediate',
-          imageUrl: image, // In a real app, upload to Storage first. We'll store base64 or a placeholder for prototyping if size permits, but Firestore has a 1MB limit. 
           createdAt: serverTimestamp()
         });
         setStep('booked');
@@ -398,7 +397,7 @@ export function HouseholdHome() {
                           {pickup.status === 'en_route' ? 'On the Way' : pickup.status.charAt(0).toUpperCase() + pickup.status.slice(1)}
                         </span>
                         <span className="text-gray-400 ml-2">
-                          {pickup.createdAt ? new Date(pickup.createdAt.toDate()).toLocaleDateString() : 'Just now'}
+                          {pickup.createdAt?.toDate ? new Date(pickup.createdAt.toDate()).toLocaleDateString() : 'Just now'}
                         </span>
                       </div>
                     </div>
