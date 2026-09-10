@@ -398,7 +398,7 @@ export function HouseholdHome() {
                           {pickup.status === 'en_route' ? 'On the Way' : pickup.status.charAt(0).toUpperCase() + pickup.status.slice(1)}
                         </span>
                         <span className="text-gray-400 ml-2">
-                          {pickup.createdAt ? new Date(pickup.createdAt.toDate()).toLocaleDateString() : 'Just now'}
+                          {pickup.createdAt?.toDate ? pickup.createdAt.toDate().toLocaleDateString() : 'Just now'}
                         </span>
                       </div>
                     </div>
